@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "Account" ALTER COLUMN "createdAt" SET DATA TYPE TIMESTAMP(6);
+
+-- AlterTable
+ALTER TABLE "User" ALTER COLUMN "address" DROP NOT NULL;
