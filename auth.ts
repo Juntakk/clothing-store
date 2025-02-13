@@ -4,7 +4,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/db/prisma";
 import { compareSync } from "bcrypt-ts-edge";
 import type { NextAuthConfig } from "next-auth";
-import { NextResponse } from "next/server";
+import { setSessionCartCookie } from "./lib/utils";
 
 export const config = {
   pages: {
@@ -95,13 +95,3 @@ export const config = {
 } satisfies NextAuthConfig;
 
 export const { handlers, auth, signIn, signOut } = NextAuth(config);
-
-function setSessionCartCookie(request: Request) {
-  const sessionCartId = crypto.randomUUID();
-  const newRequestHeaders = new Headers(request.headers);
-  const response = NextResponse.next({
-    request: { headers: newRequestHeaders },
-  });
-  response.cookies.set("sessionCartId", sessionCartId);
-  return response;
-}

@@ -1,4 +1,5 @@
 import { clsx, type ClassValue } from "clsx";
+import { NextResponse } from "next/server";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -50,4 +51,14 @@ export function round2(value: number | string) {
   } else {
     throw new Error("Value is not a number or string");
   }
+}
+
+export function setSessionCartCookie(request: Request) {
+  const sessionCartId = crypto.randomUUID();
+  const newRequestHeaders = new Headers(request.headers);
+  const response = NextResponse.next({
+    request: { headers: newRequestHeaders },
+  });
+  response.cookies.set("sessionCartId", sessionCartId);
+  return response;
 }
