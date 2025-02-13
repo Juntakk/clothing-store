@@ -52,6 +52,7 @@ export const config = {
       },
     }),
   ],
+
   callbacks: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async session({ session, user, trigger, token }: any) {

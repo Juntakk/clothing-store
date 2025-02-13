@@ -54,11 +54,21 @@ export function round2(value: number | string) {
 }
 
 export function setSessionCartCookie(request: Request) {
-  const sessionCartId = crypto.randomUUID();
+  // Generate a simple unique ID using the current timestamp and random numbers
+  const sessionCartId = `${Date.now()}-${Math.random()
+    .toString(36)
+    .substring(2, 10)}`;
+
+  // Clone the request headers
   const newRequestHeaders = new Headers(request.headers);
+
+  // Create a NextResponse object
   const response = NextResponse.next({
     request: { headers: newRequestHeaders },
   });
+
+  // Set the session cart cookie
   response.cookies.set("sessionCartId", sessionCartId);
+
   return response;
 }
