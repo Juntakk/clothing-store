@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "build:middleware": "esbuild middleware.ts --bundle --minify --outfile=dist/middleware.ts"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.4",
@@ -40,6 +41,7 @@
     "@types/react-dom": "^19",
     "@types/ws": "^8.5.14",
     "bufferutil": "^4.0.9",
+    "esbuild": "^0.25.0",
     "eslint": "^9",
     "eslint-config-next": "15.1.6",
     "postcss": "^8",
