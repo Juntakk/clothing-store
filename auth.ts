@@ -53,7 +53,6 @@ export const config = {
     }),
   ],
   callbacks: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async session({ session, user, trigger, token }: any) {
       //Set user ID form token
       session.user.id = token.sub;
@@ -67,7 +66,6 @@ export const config = {
 
       return session;
     },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
     async jwt({ token, user, trigger, session }: any) {
       //Assign user fields to token
       if (user) {
@@ -84,7 +82,6 @@ export const config = {
       }
       return token;
     },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     authorized({ request }: any) {
       if (!request.cookies.get("sessionCartId")) {
         return setSessionCartCookie(request);
