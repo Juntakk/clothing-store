@@ -4,7 +4,6 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/db/prisma";
 import { compareSync } from "bcrypt-ts-edge";
 import type { NextAuthConfig } from "next-auth";
-import { setSessionCartCookie } from "./lib/utils";
 
 export const config = {
   pages: {
@@ -52,46 +51,6 @@ export const config = {
       },
     }),
   ],
-  callbacks: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async session({ session, user, trigger, token }: any) {
-      //Set user ID form token
-      session.user.id = token.sub;
-      session.user.role = token.role;
-      session.user.name = token.name;
-
-      //If update, set user name
-      if (trigger === "update") {
-        session.user.name = user.name;
-      }
-
-      return session;
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
-    async jwt({ token, user, trigger, session }: any) {
-      //Assign user fields to token
-      if (user) {
-        token.role = user.role;
-
-        //If user has no name
-        //   if (user.name === "NO_NAME") {
-        //     token.name = user.email!.split("@")[0];
-        //     await prisma.user.update({
-        //       where: { id: user.id },
-        //       data: { name: token.name },
-        //     });
-        //   }
-      }
-      return token;
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    authorized({ request }: any) {
-      if (!request.cookies.get("sessionCartId")) {
-        return setSessionCartCookie(request);
-      }
-      return true;
-    },
-  },
 } satisfies NextAuthConfig;
 
 export const { handlers, auth, signIn, signOut } = NextAuth(config);
