@@ -74,13 +74,13 @@ export const config = {
         token.role = user.role;
 
         //If user has no name
-        if (user.name === "NO_NAME") {
-          token.name = user.email!.split("@")[0];
-          await prisma.user.update({
-            where: { id: user.id },
-            data: { name: token.name },
-          });
-        }
+        //   if (user.name === "NO_NAME") {
+        //     token.name = user.email!.split("@")[0];
+        //     await prisma.user.update({
+        //       where: { id: user.id },
+        //       data: { name: token.name },
+        //     });
+        //   }
       }
       return token;
     },
