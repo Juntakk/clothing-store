@@ -84,32 +84,24 @@ export const config = {
       }
       return token;
     },
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
-    authorized({ request, auth }: any) {
-      //Check for session cart cookie
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    authorized({ request }: any) {
       if (!request.cookies.get("sessionCartId")) {
-        //Generate new session cart id cookie
-        const sessionCartId = crypto.randomUUID();
-
-        //Clone the req headers
-        const newRequestHeaders = new Headers(request.headers);
-
-        //Create new response and add new headers
-        const response = NextResponse.next({
-          request: {
-            headers: newRequestHeaders,
-          },
-        });
-
-        //Set newly generated sessionCartId in the response cookies
-        response.cookies.set("sessionCartId", sessionCartId);
-
-        return response;
-      } else {
-        return true;
+        return setSessionCartCookie(request);
       }
+      return true;
     },
   },
 } satisfies NextAuthConfig;
 
 export const { handlers, auth, signIn, signOut } = NextAuth(config);
+
+function setSessionCartCookie(request: Request) {
+  const sessionCartId = crypto.randomUUID();
+  const newRequestHeaders = new Headers(request.headers);
+  const response = NextResponse.next({
+    request: { headers: newRequestHeaders },
+  });
+  response.cookies.set("sessionCartId", sessionCartId);
+  return response;
+}
