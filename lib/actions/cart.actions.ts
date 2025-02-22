@@ -19,7 +19,7 @@ const calcPrice = (items: CartItem[]) => {
 
   return {
     itemsPrice: itemsPrice.toFixed(2),
-    shippingPrice: itemsPrice.toFixed(2),
+    shippingPrice: shippingPrice.toFixed(2),
     taxPrice: taxPrice.toFixed(2),
     totalPrice: totalPrice.toFixed(2),
   };
