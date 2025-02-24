@@ -19,6 +19,7 @@ export const config = {
   adapter: PrismaAdapter(prisma),
   providers: [
     CredentialsProvider({
+      name: "Credentials",
       credentials: {
         email: { type: "email" },
         password: { type: "password" },
@@ -44,6 +45,7 @@ export const config = {
             return {
               id: user.id,
               name: user.name,
+              email: user.email,
               role: user.role,
             };
           }
@@ -61,6 +63,7 @@ export const config = {
       session.user.id = token.sub;
       session.user.role = token.role;
       session.user.name = token.name;
+      session.user.email = token.email;
 
       //If update, set user name
       if (trigger === "update") {
@@ -75,10 +78,13 @@ export const config = {
       if (user) {
         token.id = user.id;
         token.role = user.role;
+        token.email = user.email;
 
         //If user has no name
         if (user.name === "NO_NAME") {
           token.name = user.email!.split("@")[0];
+
+          //Update DB to reflect the token name
           await prisma.user.update({
             where: { id: user.id },
             data: { name: token.name },
