@@ -20,7 +20,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 
-const CartTable = ({ cart }: { cart?: Cart }) => {
+const CartTable = ({ cart, userId }: { cart?: Cart; userId?: string }) => {
   const router = useRouter();
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
@@ -125,22 +125,41 @@ const CartTable = ({ cart }: { cart?: Cart }) => {
                   {formatCurrency(cart.itemsPrice)}
                 </span>
               </div>
-              <Button
-                className="w-full text-xs"
-                disabled={isPending}
-                onClick={() =>
-                  startTransition(() => {
-                    router.push("/shipping-address");
-                  })
-                }
-              >
-                {isPending ? (
-                  <Loader className="w-4 h-4 animate-spin" />
-                ) : (
-                  <ArrowRight className="w-4 h-4" />
-                )}
-                Proceed to checkout
-              </Button>
+              {userId ? (
+                <Button
+                  className="w-full text-xs"
+                  disabled={isPending}
+                  onClick={() =>
+                    startTransition(() => {
+                      router.push("/shipping-address");
+                    })
+                  }
+                >
+                  {isPending ? (
+                    <Loader className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <ArrowRight className="w-4 h-4" />
+                  )}
+                  Proceed to checkout
+                </Button>
+              ) : (
+                <Button
+                  className="w-full text-xs"
+                  disabled={isPending}
+                  onClick={() =>
+                    startTransition(() => {
+                      router.push("/sign-in");
+                    })
+                  }
+                >
+                  {isPending ? (
+                    <Loader className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <ArrowRight className="w-4 h-4" />
+                  )}
+                  Sign In to Checkout
+                </Button>
+              )}
             </CardContent>
           </Card>
         </div>
