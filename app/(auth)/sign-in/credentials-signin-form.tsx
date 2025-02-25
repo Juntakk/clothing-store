@@ -7,7 +7,7 @@ import { signInDefaultValues } from "@/lib/constants";
 import Link from "next/link";
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
-import { signInWithCredentials } from "@/lib/actions/users.actions";
+import { signInWithCredentials } from "@/lib/actions/user.actions";
 import { useSearchParams } from "next/navigation";
 
 const CredentialsSignInForm = () => {
@@ -21,9 +21,10 @@ const CredentialsSignInForm = () => {
 
   const SignInButton = () => {
     const { pending } = useFormStatus();
+
     return (
       <Button disabled={pending} className="w-full" variant="default">
-        {pending ? "Signing in..." : "Sign In"}
+        {pending ? "Signing In..." : "Sign In"}
       </Button>
     );
   };
@@ -54,18 +55,20 @@ const CredentialsSignInForm = () => {
             defaultValue={signInDefaultValues.password}
           />
         </div>
-        <SignInButton />
-      </div>
+        <div>
+          <SignInButton />
+        </div>
 
-      {data && !data.success && (
-        <div className="text-center text-destructive">{data.message}</div>
-      )}
+        {data && !data.success && (
+          <div className="text-center text-destructive">{data.message}</div>
+        )}
 
-      <div className="text-sm text-center text-muted-foreground">
-        Don&apos;t have an account ?{" "}
-        <Link href="/sign-up" target="" className="link">
-          Sign up
-        </Link>
+        <div className="text-sm text-center text-muted-foreground">
+          Don&apos;t have an account?{" "}
+          <Link href="/sign-up" target="_self" className="link">
+            Sign Up
+          </Link>
+        </div>
       </div>
     </form>
   );

@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { auth } from "@/auth";
+import { signOutUser } from "@/lib/actions/user.actions";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -7,9 +9,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { signOutUser } from "@/lib/actions/users.actions";
 import { UserIcon } from "lucide-react";
-import Link from "next/link";
 
 const UserButton = async () => {
   const session = await auth();
@@ -18,14 +18,14 @@ const UserButton = async () => {
     return (
       <Button asChild>
         <Link href="/sign-in">
-          <UserIcon />
-          Sign In
+          <UserIcon /> Sign In
         </Link>
       </Button>
     );
   }
 
-  const firstInitial = session.user?.name?.charAt(0).toUpperCase() ?? "";
+  const firstInitial = session.user?.name?.charAt(0).toUpperCase() ?? "U";
+
   return (
     <div className="flex gap-2 items-center">
       <DropdownMenu>
@@ -33,7 +33,7 @@ const UserButton = async () => {
           <div className="flex items-center">
             <Button
               variant="ghost"
-              className="relative w-8 h-8 rounded-full ml-2 flex items-center justify-center bg-gray-200 text-black"
+              className="relativee w-8 h-8 rounded-full ml-2 flex items-center justify-center text-black bg-gray-200"
             >
               {firstInitial}
             </Button>
@@ -61,6 +61,7 @@ const UserButton = async () => {
               Order History
             </Link>
           </DropdownMenuItem>
+
           {session?.user?.role === "admin" && (
             <DropdownMenuItem>
               <Link href="/admin/overview" className="w-full">
@@ -68,6 +69,7 @@ const UserButton = async () => {
               </Link>
             </DropdownMenuItem>
           )}
+
           <DropdownMenuItem className="p-0 mb-1">
             <form action={signOutUser} className="w-full">
               <Button

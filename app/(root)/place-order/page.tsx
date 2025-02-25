@@ -11,7 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { getMyCart } from "@/lib/actions/cart.actions";
-import { getUserById } from "@/lib/actions/users.actions";
+import { getUserById } from "@/lib/actions/user.actions";
 import { formatCurrency } from "@/lib/utils";
 import { ShippingAddress } from "@/types";
 import { Metadata } from "next";
