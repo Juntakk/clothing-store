@@ -6,8 +6,6 @@ const Charts = ({
 }: {
   data: { salesData: { month: string; totalSales: number }[] };
 }) => {
-  console.log("Sales Data:", salesData); // Debugging line
-
   return (
     <ResponsiveContainer width="100%" height={350}>
       <BarChart data={salesData}>
@@ -25,7 +23,12 @@ const Charts = ({
           axisLine={false}
           tickFormatter={(value) => `$${value}`}
         />
-        <Bar dataKey="totalSales" fill="#000000" radius={[4, 4, 0, 0]} />
+        <Bar
+          dataKey="totalSales"
+          fill="currentColor"
+          radius={[4, 4, 0, 0]}
+          className="fill-primary"
+        />
       </BarChart>
     </ResponsiveContainer>
   );

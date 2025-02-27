@@ -1,4 +1,3 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -7,20 +6,22 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getOrderSummary } from "@/lib/actions/order.actions";
 import { formatCurrency, formatDateTime, formatNumber } from "@/lib/utils";
 import { BadgeDollarSign, Barcode, CreditCard, Users } from "lucide-react";
 import { Metadata } from "next";
 import Link from "next/link";
 import Charts from "./charts";
-// import { requireAdmin } from "@/lib/auth-guard";
+import { requireAdmin } from "@/lib/auth-guard";
 
 export const metadata: Metadata = {
   title: "Admin Dashboard",
 };
 
 const AdminOverviewPage = async () => {
-  //   await requireAdmin();
+  await requireAdmin();
+
   const summary = await getOrderSummary();
 
   return (
@@ -35,7 +36,7 @@ const AdminOverviewPage = async () => {
           <CardContent>
             <div className="text-2xl font-bold">
               {formatCurrency(
-                summary.totalSales._sum.totalPrice!.toString() || 0
+                summary.totalSales._sum.totalPrice?.toString() || 0
               )}
             </div>
           </CardContent>
@@ -105,7 +106,7 @@ const AdminOverviewPage = async () => {
                 {summary.latestSales.map((order) => (
                   <TableRow key={order.id}>
                     <TableCell>
-                      {order?.user?.name ? order.user.name : "Deleted user"}
+                      {order?.user?.name ? order.user.name : "Deleted User"}
                     </TableCell>
                     <TableCell>
                       {formatDateTime(order.createdAt).dateOnly}
