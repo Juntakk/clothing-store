@@ -47,6 +47,12 @@ const OrderDetailsPage = async (props: {
       order={{
         ...order,
         shippingAddress: order.shippingAddress as ShippingAddress,
+        paymentResult: order.paymentResult as {
+          id: string;
+          status: string;
+          email_address: string;
+          pricePaid: string;
+        } | null,
       }}
       stripeClientSecret={client_secret}
       paypalClientId={process.env.PAYPAL_CLIENT_ID || "sb"}
