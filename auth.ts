@@ -6,6 +6,7 @@ import { compareSync } from "bcrypt-ts-edge";
 import type { NextAuthConfig } from "next-auth";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { authConfig } from "./auth.config";
 
 export const config = {
   pages: {
@@ -13,7 +14,7 @@ export const config = {
     error: "/auth/signin",
   },
   session: {
-    strategy: "jwt",
+    strategy: "jwt" as const,
     maxAge: 30 * 24,
   },
   adapter: PrismaAdapter(prisma),
@@ -57,6 +58,7 @@ export const config = {
   ],
 
   callbacks: {
+    ...authConfig.callbacks,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async session({ session, user, trigger, token }: any) {
       //Set user ID form token
