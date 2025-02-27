@@ -1,7 +1,7 @@
 "use client";
 
 import { useToast } from "@/hooks/use-toast";
-import { shippingAddressDefault } from "@/lib/constants";
+import { shippingAddressDefaultValues } from "@/lib/constants";
 import { shippingAddressSchema } from "@/lib/validators";
 import { ShippingAddress } from "@/types";
 import { useRouter } from "next/navigation";
@@ -28,7 +28,7 @@ const ShippingAddressForm = ({ address }: { address: ShippingAddress }) => {
 
   const form = useForm<z.infer<typeof shippingAddressSchema>>({
     resolver: zodResolver(shippingAddressSchema),
-    defaultValues: address || shippingAddressDefault,
+    defaultValues: address || shippingAddressDefaultValues,
   });
   const [isPending, startTransition] = useTransition();
 
