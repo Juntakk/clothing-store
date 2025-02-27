@@ -1,5 +1,4 @@
 "use client";
-
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -10,24 +9,24 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 import { formatCurrency, formatDateTime, formatId } from "@/lib/utils";
 import { Order } from "@/types";
 import Link from "next/link";
 import Image from "next/image";
+import { useToast } from "@/hooks/use-toast";
+import { useTransition } from "react";
 import {
   PayPalButtons,
   PayPalScriptProvider,
   usePayPalScriptReducer,
 } from "@paypal/react-paypal-js";
 import {
-  approvePayPalOrder,
   createPayPalOrder,
+  approvePayPalOrder,
   updateOrderToPaidCOD,
   deliverOrder,
 } from "@/lib/actions/order.actions";
-import { useToast } from "@/hooks/use-toast";
-import { useTransition } from "react";
-import { Button } from "@/components/ui/button";
 import StripePayment from "./stripe-payment";
 
 const OrderDetailsTable = ({
@@ -36,7 +35,7 @@ const OrderDetailsTable = ({
   isAdmin,
   stripeClientSecret,
 }: {
-  order: Order;
+  order: Omit<Order, "paymentResult">;
   paypalClientId: string;
   isAdmin: boolean;
   stripeClientSecret: string | null;
@@ -50,12 +49,14 @@ const OrderDetailsTable = ({
     taxPrice,
     totalPrice,
     paymentMethod,
-    isPaid,
     isDelivered,
+    isPaid,
     paidAt,
     deliveredAt,
   } = order;
+
   const { toast } = useToast();
+
   const PrintLoadingState = () => {
     const [{ isPending, isRejected }] = usePayPalScriptReducer();
     let status = "";
@@ -63,7 +64,7 @@ const OrderDetailsTable = ({
     if (isPending) {
       status = "Loading PayPal...";
     } else if (isRejected) {
-      status = "Error loading PayPal";
+      status = "Error Loading PayPal";
     }
     return status;
   };
@@ -72,8 +73,12 @@ const OrderDetailsTable = ({
     const res = await createPayPalOrder(order.id);
 
     if (!res.success) {
-      toast({ variant: "destructive", description: res.message });
+      toast({
+        variant: "destructive",
+        description: res.message,
+      });
     }
+
     return res.data;
   };
 
@@ -86,7 +91,7 @@ const OrderDetailsTable = ({
     });
   };
 
-  //Button to mark order as paid
+  // Button to mark order as paid
   const MarkAsPaidButton = () => {
     const [isPending, startTransition] = useTransition();
     const { toast } = useToast();
@@ -110,7 +115,7 @@ const OrderDetailsTable = ({
     );
   };
 
-  //Button to mark order as delivered
+  // Button to mark order as delivered
   const MarkAsDeliveredButton = () => {
     const [isPending, startTransition] = useTransition();
     const { toast } = useToast();
@@ -138,10 +143,10 @@ const OrderDetailsTable = ({
     <>
       <h1 className="py-4 text-2xl">Order {formatId(id)}</h1>
       <div className="grid md:grid-cols-3 md:gap-5">
-        <div className="col-span-2 space-y-4 overflow-x-auto">
+        <div className="col-span-2 space-4-y overlow-x-auto">
           <Card>
             <CardContent className="p-4 gap-4">
-              <h2 className="text-sx pb-4">Payment Method</h2>
+              <h2 className="text-xl pb-4">Payment Method</h2>
               <p className="mb-2">{paymentMethod}</p>
               {isPaid ? (
                 <Badge variant="secondary">
@@ -154,7 +159,7 @@ const OrderDetailsTable = ({
           </Card>
           <Card className="my-2">
             <CardContent className="p-4 gap-4">
-              <h2 className="text-sx pb-4">Shipping Address</h2>
+              <h2 className="text-xl pb-4">Shipping Address</h2>
               <p>{shippingAddress.fullName}</p>
               <p className="mb-2">
                 {shippingAddress.streetAddress}, {shippingAddress.city}
@@ -165,7 +170,7 @@ const OrderDetailsTable = ({
                   Delivered at {formatDateTime(deliveredAt!).dateTime}
                 </Badge>
               ) : (
-                <Badge variant="destructive">Not delivered</Badge>
+                <Badge variant="destructive">Not Delivered</Badge>
               )}
             </CardContent>
           </Card>
@@ -185,7 +190,7 @@ const OrderDetailsTable = ({
                     <TableRow key={item.slug}>
                       <TableCell>
                         <Link
-                          href={`/product/${item.slug}`}
+                          href={`/product/{item.slug}`}
                           className="flex items-center"
                         >
                           <Image
@@ -200,8 +205,8 @@ const OrderDetailsTable = ({
                       <TableCell>
                         <span className="px-2">{item.qty}</span>
                       </TableCell>
-                      <TableCell>
-                        <span className="text-right">${item.price}</span>
+                      <TableCell className="text-right">
+                        ${item.price}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -229,7 +234,8 @@ const OrderDetailsTable = ({
                 <div>Total</div>
                 <div>{formatCurrency(totalPrice)}</div>
               </div>
-              {/*Paypal paymeny */}
+
+              {/* PayPal Payment */}
               {!isPaid && paymentMethod === "PayPal" && (
                 <div>
                   <PayPalScriptProvider options={{ clientId: paypalClientId }}>
@@ -242,7 +248,7 @@ const OrderDetailsTable = ({
                 </div>
               )}
 
-              {/*Stripe payment */}
+              {/* Stripe Payment */}
               {!isPaid && paymentMethod === "Stripe" && stripeClientSecret && (
                 <StripePayment
                   priceInCents={Number(order.totalPrice) * 100}
@@ -251,7 +257,7 @@ const OrderDetailsTable = ({
                 />
               )}
 
-              {/*Cash On Delivery */}
+              {/* Cash On Delivery */}
               {isAdmin && !isPaid && paymentMethod === "CashOnDelivery" && (
                 <MarkAsPaidButton />
               )}

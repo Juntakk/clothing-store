@@ -13,22 +13,22 @@ const SuccessPage = async (props: {
   const { id } = await props.params;
   const { payment_intent: paymentIntentId } = await props.searchParams;
 
-  //Fetch order
+  // Fetch order
   const order = await getOrderById(id);
   if (!order) notFound();
 
-  //Retrieve payment intent
+  // Retrieve payment intent
   const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
 
-  //Check if payment intent is valid
+  // Check if payment intent is valid
   if (
-    paymentIntent.metadata.orderId === null ||
+    paymentIntent.metadata.orderId == null ||
     paymentIntent.metadata.orderId !== order.id.toString()
   ) {
-    notFound();
+    return notFound();
   }
 
-  //Check if ayment is successful
+  // Check if payment is successful
   const isSuccess = paymentIntent.status === "succeeded";
 
   if (!isSuccess) return redirect(`/order/${id}`);
@@ -37,7 +37,7 @@ const SuccessPage = async (props: {
     <div className="max-w-4xl w-full mx-auto space-y-8">
       <div className="flex flex-col gap-6 items-center">
         <h1 className="h1-bold">Thanks for your purchase</h1>
-        <div>We are processing your order now.</div>
+        <div>We are processing your order.</div>
         <Button asChild>
           <Link href={`/order/${id}`}>View Order</Link>
         </Button>
