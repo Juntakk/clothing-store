@@ -3,7 +3,7 @@ import { SENDER_EMAIL, APP_NAME } from "@/lib/constants";
 import PurchaseReceiptEmail from "./purchase-receipt";
 import { Order } from "@/types";
 
-const resend = new Resend("re_DSZw53w5_RzgkfYddNHdFCemqHSUHTtfQ");
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendPurchaseReceipt = async ({ order }: { order: Order }) => {
   try {
