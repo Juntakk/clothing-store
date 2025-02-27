@@ -46,10 +46,9 @@ export async function signOutUser() {
   const currentCart = await getMyCart();
 
   if (currentCart?.id) {
-    await prisma.cart.delete({ where: { id: currentCart.id } });
-  } else {
-    console.warn("No cart found for deletion.");
+    await prisma.cart.delete({ where: { id: currentCart?.id } });
   }
+
   await signOut();
 }
 
