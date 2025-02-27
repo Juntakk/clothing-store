@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 "use server";
 
 import { isRedirectError } from "next/dist/client/components/redirect-error";
@@ -8,13 +7,14 @@ import { getMyCart } from "./cart.actions";
 import { getUserById } from "./user.actions";
 import { insertOrderSchema } from "../validators";
 import { prisma } from "@/db/prisma";
-import { CartItem, PaymentResult } from "@/types";
+import { CartItem, PaymentResult, ShippingAddress } from "@/types";
 import { paypal } from "../paypal";
 import { revalidatePath } from "next/cache";
 import { PAGE_SIZE } from "../constants";
 import { Prisma } from "@prisma/client";
+import { sendPurchaseReceipt } from "@/email";
 
-//Create order and create order items
+// Create order and create the order items
 export async function createOrder() {
   try {
     const session = await auth();
@@ -22,14 +22,18 @@ export async function createOrder() {
 
     const cart = await getMyCart();
     const userId = session?.user?.id;
-
     if (!userId) throw new Error("User not found");
 
     const user = await getUserById(userId);
 
     if (!cart || cart.items.length === 0) {
-      return { success: false, message: "Cart is empty", redirectTo: "/cart" };
+      return {
+        success: false,
+        message: "Your cart is empty",
+        redirectTo: "/cart",
+      };
     }
+
     if (!user.address) {
       return {
         success: false,
@@ -37,6 +41,7 @@ export async function createOrder() {
         redirectTo: "/shipping-address",
       };
     }
+
     if (!user.paymentMethod) {
       return {
         success: false,
@@ -45,7 +50,7 @@ export async function createOrder() {
       };
     }
 
-    //Create order object
+    // Create order object
     const order = insertOrderSchema.parse({
       userId: user.id,
       shippingAddress: user.address,
@@ -56,13 +61,11 @@ export async function createOrder() {
       totalPrice: cart.totalPrice,
     });
 
-    //Create a transaction to create order and order items in DB
+    // Create a transaction to create order and order items in database
     const insertedOrderId = await prisma.$transaction(async (tx) => {
-      //Create order
-      const insertedOrder = await tx.order.create({
-        data: order,
-      });
-      //Create order items from cart items
+      // Create order
+      const insertedOrder = await tx.order.create({ data: order });
+      // Create order items from the cart items
       for (const item of cart.items as CartItem[]) {
         await tx.orderItem.create({
           data: {
@@ -72,18 +75,18 @@ export async function createOrder() {
           },
         });
       }
-
-      //Clear cart
+      // Clear cart
       await tx.cart.update({
         where: { id: cart.id },
         data: {
           items: [],
           totalPrice: 0,
-          shippingPrice: 0,
           taxPrice: 0,
+          shippingPrice: 0,
           itemsPrice: 0,
         },
       });
+
       return insertedOrder.id;
     });
 
@@ -100,28 +103,25 @@ export async function createOrder() {
   }
 }
 
-//Get order by id
+// Get order by id
 export async function getOrderById(orderId: string) {
   const data = await prisma.order.findFirst({
-    where: { id: orderId },
+    where: {
+      id: orderId,
+    },
     include: {
       orderitems: true,
-      user: {
-        select: {
-          name: true,
-          email: true,
-        },
-      },
+      user: { select: { name: true, email: true } },
     },
   });
 
   return convertToPlainObject(data);
 }
 
-//Create new paypal order
+// Create new paypal order
 export async function createPayPalOrder(orderId: string) {
   try {
-    //Get order from DB
+    // Get order from database
     const order = await prisma.order.findFirst({
       where: {
         id: orderId,
@@ -129,10 +129,10 @@ export async function createPayPalOrder(orderId: string) {
     });
 
     if (order) {
-      //Create paypal order
+      // Create paypal order
       const paypalOrder = await paypal.createOrder(Number(order.totalPrice));
 
-      //Update order with paypal order id
+      // Update order with paypal order id
       await prisma.order.update({
         where: { id: orderId },
         data: {
@@ -144,6 +144,7 @@ export async function createPayPalOrder(orderId: string) {
           },
         },
       });
+
       return {
         success: true,
         message: "Item order created successfully",
@@ -157,18 +158,19 @@ export async function createPayPalOrder(orderId: string) {
   }
 }
 
-//Approve paypal order and update order to paid
+// Approve paypal order and update order to paid
 export async function approvePayPalOrder(
   orderId: string,
   data: { orderID: string }
 ) {
   try {
-    //Get order from DB
+    // Get order from database
     const order = await prisma.order.findFirst({
       where: {
         id: orderId,
       },
     });
+
     if (!order) throw new Error("Order not found");
 
     const captureData = await paypal.capturePayment(data.orderID);
@@ -181,7 +183,7 @@ export async function approvePayPalOrder(
       throw new Error("Error in PayPal payment");
     }
 
-    //Update order to paid
+    // Update order to paid
     await updateOrderToPaid({
       orderId,
       paymentResult: {
@@ -257,9 +259,17 @@ export async function updateOrderToPaid({
   });
 
   if (!updatedOrder) throw new Error("Order not found");
+
+  sendPurchaseReceipt({
+    order: {
+      ...updatedOrder,
+      shippingAddress: updatedOrder.shippingAddress as ShippingAddress,
+      paymentResult: updatedOrder.paymentResult as PaymentResult,
+    },
+  });
 }
 
-//Get user's orders
+// Get user's orders
 export async function getMyOrders({
   limit = PAGE_SIZE,
   page,
@@ -271,14 +281,14 @@ export async function getMyOrders({
   if (!session) throw new Error("User is not authorized");
 
   const data = await prisma.order.findMany({
-    where: { userId: session?.user?.id! },
+    where: { userId: session?.user?.id },
     orderBy: { createdAt: "desc" },
     take: limit,
     skip: (page - 1) * limit,
   });
 
   const dataCount = await prisma.order.count({
-    where: { userId: session?.user?.id! },
+    where: { userId: session?.user?.id },
   });
 
   return {
@@ -292,19 +302,19 @@ type SalesDataType = {
   totalSales: number;
 }[];
 
-//Get sales data and order summary
+// Get sales data and order summary
 export async function getOrderSummary() {
-  //Get counts for each resource
+  // Get counts for each resource
   const ordersCount = await prisma.order.count();
   const productsCount = await prisma.product.count();
   const usersCount = await prisma.user.count();
 
-  //Calculate total sales
+  // Calculate the total sales
   const totalSales = await prisma.order.aggregate({
     _sum: { totalPrice: true },
   });
 
-  //Get monthly sales
+  // Get monthly sales
   const salesDataRaw = await prisma.$queryRaw<
     Array<{ month: string; totalSales: Prisma.Decimal }>
   >`SELECT to_char("createdAt", 'MM/YY') as "month", sum("totalPrice") as "totalSales" FROM "Order" GROUP BY to_char("createdAt", 'MM/YY')`;
@@ -314,16 +324,15 @@ export async function getOrderSummary() {
     totalSales: Number(entry.totalSales),
   }));
 
-  //Get latest sales
+  // Get latest sales
   const latestSales = await prisma.order.findMany({
     orderBy: { createdAt: "desc" },
     include: {
-      user: {
-        select: { name: true },
-      },
+      user: { select: { name: true } },
     },
     take: 6,
   });
+
   return {
     ordersCount,
     productsCount,
@@ -334,6 +343,7 @@ export async function getOrderSummary() {
   };
 }
 
+// Get all orders
 export async function getAllOrders({
   limit = PAGE_SIZE,
   page,
@@ -389,12 +399,12 @@ export async function deleteOrder(id: string) {
   }
 }
 
-//Update COD order to paid
+// Update COD order to paid
 export async function updateOrderToPaidCOD(orderId: string) {
   try {
     await updateOrderToPaid({ orderId });
 
-    revalidatePath(`/orders/${orderId}`);
+    revalidatePath(`/order/${orderId}`);
 
     return { success: true, message: "Order marked as paid" };
   } catch (error) {
@@ -402,11 +412,13 @@ export async function updateOrderToPaidCOD(orderId: string) {
   }
 }
 
-//Update COD order to delivered
+// Update COD order to delivered
 export async function deliverOrder(orderId: string) {
   try {
     const order = await prisma.order.findFirst({
-      where: { id: orderId },
+      where: {
+        id: orderId,
+      },
     });
 
     if (!order) throw new Error("Order not found");
