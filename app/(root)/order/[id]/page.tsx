@@ -52,7 +52,7 @@ const OrderDetailsPage = async (props: {
           status: string;
           email_address: string;
           pricePaid: string;
-        } | null,
+        },
       }}
       stripeClientSecret={client_secret}
       paypalClientId={process.env.PAYPAL_CLIENT_ID || "sb"}
