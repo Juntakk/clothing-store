@@ -114,7 +114,7 @@ const DealCountdown = () => {
         <Image
           src="/images/promo.jpg"
           alt="promotion"
-          width={300}
+          width={400}
           height={200}
         />
       </div>
