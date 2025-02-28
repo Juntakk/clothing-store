@@ -5,10 +5,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { APP_NAME } from "@/lib/constants";
-import Link from "next/link";
 import { Metadata } from "next";
+import Link from "next/link";
 import Image from "next/image";
+import { APP_NAME } from "@/lib/constants";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import SignUpForm from "./sign-up-form";
@@ -18,7 +18,9 @@ export const metadata: Metadata = {
 };
 
 const SignUpPage = async (props: {
-  searchParams: Promise<{ callbackUrl: string }>;
+  searchParams: Promise<{
+    callbackUrl: string;
+  }>;
 }) => {
   const { callbackUrl } = await props.searchParams;
 
@@ -41,9 +43,9 @@ const SignUpPage = async (props: {
               priority={true}
             />
           </Link>
-          <CardTitle className="text-center">Sign Up</CardTitle>
+          <CardTitle className="text-center">Create Account</CardTitle>
           <CardDescription className="text-center">
-            Create your account
+            Enter your information below to sign up
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">

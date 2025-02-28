@@ -21,6 +21,7 @@ const SignUpForm = () => {
 
   const SignUpButton = () => {
     const { pending } = useFormStatus();
+
     return (
       <Button disabled={pending} className="w-full" variant="default">
         {pending ? "Submitting..." : "Sign Up"}
@@ -33,12 +34,11 @@ const SignUpForm = () => {
       <input type="hidden" name="callbackUrl" value={callbackUrl} />
       <div className="space-y-6">
         <div>
-          <Label htmlFor="name">Name</Label>
+          <Label htmlFor="email">Name</Label>
           <Input
             id="name"
             name="name"
             type="text"
-            required
             autoComplete="name"
             defaultValue={signUpDefaultValues.name}
           />
@@ -48,8 +48,7 @@ const SignUpForm = () => {
           <Input
             id="email"
             name="email"
-            type="email"
-            required
+            type="text"
             autoComplete="email"
             defaultValue={signUpDefaultValues.email}
           />
@@ -76,18 +75,20 @@ const SignUpForm = () => {
             defaultValue={signUpDefaultValues.confirmPassword}
           />
         </div>
-        <SignUpButton />
-      </div>
+        <div>
+          <SignUpButton />
+        </div>
 
-      {data && !data.success && (
-        <div className="text-center text-destructive">{data.message}</div>
-      )}
+        {data && !data.success && (
+          <div className="text-center text-destructive">{data.message}</div>
+        )}
 
-      <div className="text-sm text-center text-muted-foreground">
-        Already have an account ?{" "}
-        <Link href="/sign-in" target="" className="link">
-          Sign In
-        </Link>
+        <div className="text-sm text-center text-muted-foreground">
+          Already have an account?{" "}
+          <Link href="/sign-in" target="_self" className="link">
+            Sign In
+          </Link>
+        </div>
       </div>
     </form>
   );
