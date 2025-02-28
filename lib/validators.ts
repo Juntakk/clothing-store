@@ -9,24 +9,32 @@ const currency = z
     "Price must have exactly two decimal places"
   );
 
-// Schema for inserting products
 export const insertProductSchema = z.object({
-  //   id: z.string()?.min(3, "Id"),
-  name: z.string().min(3, "Name must be at least 3 characters"),
-  slug: z.string().min(3, "Slug must be at least 3 characters"),
-  category: z.string().min(3, "Category must be at least 3 characters"),
-  brand: z.string().min(3, "Brand must be at least 3 characters"),
-  description: z.string().min(3, "Description must be at least 3 characters"),
-  stock: z.coerce.number(),
-  images: z.array(z.string()).min(1, "Product must have at least one image"),
+  name: z.string(),
+  slug: z.string(),
+  category: z.string(),
+  brand: z.string(),
+  description: z.string(),
+  stock: z.number(),
+  images: z.array(z.string()),
   isFeatured: z.boolean(),
   banner: z.string().nullable(),
-  price: currency,
+  price: z.string(),
+  id: z.string().optional(),
 });
 
-// Schema for updating products
-export const updateProductSchema = insertProductSchema.extend({
-  id: z.string().min(1, "Id is required"),
+export const updateProductSchema = z.object({
+  name: z.string(),
+  slug: z.string(),
+  category: z.string(),
+  brand: z.string(),
+  description: z.string(),
+  stock: z.number(),
+  images: z.array(z.string()),
+  isFeatured: z.boolean(),
+  banner: z.string().nullable(),
+  price: z.string(),
+  id: z.string().optional(),
 });
 
 // Schema for signing users in
