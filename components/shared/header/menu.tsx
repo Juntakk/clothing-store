@@ -16,10 +16,9 @@ const Menu = () => {
     <div className="flex justify-end gap-3">
       <nav className="hidden md:flex w-full max-w-xs gap-1">
         <ModeToggle />
-        <Button asChild variant="ghost">
+        <Button asChild variant="ghost" className="mr-3">
           <Link href="/cart">
             <ShoppingCart />
-            Cart
           </Link>
         </Button>
         <UserButton />
@@ -29,13 +28,12 @@ const Menu = () => {
           <SheetTrigger className="align-middle">
             <EllipsisVertical />
           </SheetTrigger>
-          <SheetContent className="flex flex-col items-start">
-            <SheetTitle>Menu</SheetTitle>
+          <SheetContent className="flex flex-col items-center w-max">
+            <SheetTitle className="mt-5"></SheetTitle>
             <ModeToggle />
             <Button asChild variant="ghost">
               <Link href="/cart">
                 <ShoppingCart />
-                Cart
               </Link>
             </Button>
             <UserButton />

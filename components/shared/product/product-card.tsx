@@ -25,7 +25,6 @@ const ProductCard = ({ product }: { product: Product }) => {
         </Link>
         <div className="flex-between gap-4">
           <Rating value={Number(product.rating)} />
-          <p className="text-xs cursor-default">{product.numReviews} reviews</p>
           {product.stock > 0 ? (
             <ProductPrice value={Number(product.price)} />
           ) : (

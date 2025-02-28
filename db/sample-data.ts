@@ -21,8 +21,8 @@ const sampleData = {
       description:
         "Creamy and nutrient-rich organic avocados, perfect for salads or guacamole.",
       images: [
-        "/images/sample-products/g1-1.jpg",
-        "/images/sample-products/g1-2.jpg",
+        "/images/sample-products/p1-1.jpg",
+        "/images/sample-products/p1-2.jpg",
       ],
       price: 6.99,
       brand: "Green Farms",
@@ -39,8 +39,8 @@ const sampleData = {
       description:
         "Zesty and tangy lemons for cooking, baking, or making refreshing drinks.",
       images: [
-        "/images/sample-products/g2-1.jpg",
-        "/images/sample-products/g2-2.jpg",
+        "/images/sample-products/p2-1.jpg",
+        "/images/sample-products/p2-2.jpg",
       ],
       price: 3.99,
       brand: "Citrus Grove",
@@ -57,8 +57,8 @@ const sampleData = {
       description:
         "Freshly baked whole wheat bread with a soft texture, perfect for sandwiches.",
       images: [
-        "/images/sample-products/g3-1.jpg",
-        "/images/sample-products/g3-2.jpg",
+        "/images/sample-products/p3-1.jpg",
+        "/images/sample-products/p3-2.jpg",
       ],
       price: 2.99,
       brand: "Baker's Delight",
@@ -75,8 +75,8 @@ const sampleData = {
       description:
         "High-quality, cold-pressed extra virgin olive oil for cooking and dressing.",
       images: [
-        "/images/sample-products/g4-1.jpg",
-        "/images/sample-products/g4-2.jpg",
+        "/images/sample-products/p4-1.jpg",
+        "/images/sample-products/p4-2.jpg",
       ],
       price: 9.99,
       brand: "Oliva",
@@ -93,8 +93,8 @@ const sampleData = {
       description:
         "Creamy and delicious almond milk, a perfect dairy-free substitute for your daily needs.",
       images: [
-        "/images/sample-products/g5-1.jpg",
-        "/images/sample-products/g5-2.jpg",
+        "/images/sample-products/p5-1.jpg",
+        "/images/sample-products/p5-2.jpg",
       ],
       price: 3.49,
       brand: "Silk",
@@ -107,12 +107,12 @@ const sampleData = {
     {
       name: "Organic Granola (500g)",
       slug: "organic-granola-500g",
-      category: "Snacks & Cereals",
+      category: "Snacks",
       description:
         "Crunchy and nutritious organic granola, perfect for breakfast or as a snack.",
       images: [
-        "/images/sample-products/g6-1.jpg",
-        "/images/sample-products/g6-2.jpg",
+        "/images/sample-products/p6-1.jpg",
+        "/images/sample-products/p6-2.jpg",
       ],
       price: 4.99,
       brand: "Healthy Harvest",

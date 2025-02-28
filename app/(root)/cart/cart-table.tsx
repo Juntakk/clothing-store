@@ -26,15 +26,20 @@ const CartTable = ({ cart, userId }: { cart?: Cart; userId?: string }) => {
   const [isPending, startTransition] = useTransition();
 
   return (
-    <>
-      <h1 className="py-4 h2-bold">Cart</h1>
+    <div className="space-y-6">
+      <h1 className="h2-bold py-4">Your Cart</h1>
+
       {!cart || cart.items.length === 0 ? (
-        <div>
-          Cart is Empty. <Link href="/"></Link>
+        <div className="text-center text-gray-500">
+          Your cart is empty.{" "}
+          <Link href="/" className="text-primary hover:underline">
+            Continue shopping
+          </Link>
         </div>
       ) : (
-        <div className="grid md:grid-cols-4 md:gap-5">
-          <div className="overflow-x-auto md:col-span-3">
+        <div className="grid gap-6 md:grid-cols-6">
+          {/* Cart Items Table - Smaller Section */}
+          <div className="overflow-x-auto md:col-span-4">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -49,85 +54,93 @@ const CartTable = ({ cart, userId }: { cart?: Cart; userId?: string }) => {
                     <TableCell>
                       <Link
                         href={`/product/${item.slug}`}
-                        className="flex items-center"
+                        className="flex items-center gap-2"
                       >
                         <Image
                           src={item.image}
                           alt={item.name}
                           width={50}
                           height={50}
+                          className="rounded"
                         />
-                        <span className="px-2">{item.name}</span>
+                        <span className="font-medium">{item.name}</span>
                       </Link>
                     </TableCell>
-                    <TableCell className="flex-center gap-2">
-                      <Button
-                        disabled={isPending}
-                        variant="outline"
-                        type="button"
-                        onClick={() =>
-                          startTransition(async () => {
-                            const res = await removeItemFromCart(
-                              item.productId
-                            );
-
-                            if (!res.success) {
-                              toast({
-                                variant: "destructive",
-                                description: res.message,
-                              });
-                            }
-                          })
-                        }
-                      >
-                        {isPending ? (
-                          <Loader className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <Minus className="h-4 w-4" />
-                        )}
-                      </Button>
-                      <span>{item.qty}</span>
-                      <Button
-                        disabled={isPending}
-                        variant="outline"
-                        type="button"
-                        onClick={() =>
-                          startTransition(async () => {
-                            const res = await addItemToCart(item);
-
-                            if (!res.success) {
-                              toast({
-                                variant: "destructive",
-                                description: res.message,
-                              });
-                            }
-                          })
-                        }
-                      >
-                        {isPending ? (
-                          <Loader className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <Plus className="h-4 w-4" />
-                        )}
-                      </Button>
+                    <TableCell>
+                      <div className="flex items-center justify-center gap-2">
+                        <Button
+                          disabled={isPending}
+                          variant="outline"
+                          size="icon"
+                          onClick={() =>
+                            startTransition(async () => {
+                              const res = await removeItemFromCart(
+                                item.productId
+                              );
+                              if (!res.success) {
+                                toast({
+                                  variant: "destructive",
+                                  description: res.message,
+                                });
+                              }
+                            })
+                          }
+                        >
+                          {isPending ? (
+                            <Loader className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <Minus className="h-4 w-4" />
+                          )}
+                        </Button>
+                        <span className="w-6 text-center">{item.qty}</span>
+                        <Button
+                          disabled={isPending}
+                          variant="outline"
+                          size="icon"
+                          onClick={() =>
+                            startTransition(async () => {
+                              const res = await addItemToCart(item);
+                              if (!res.success) {
+                                toast({
+                                  variant: "destructive",
+                                  description: res.message,
+                                });
+                              }
+                            })
+                          }
+                        >
+                          {isPending ? (
+                            <Loader className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <Plus className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </div>
                     </TableCell>
-                    <TableCell className="text-right">${item.price}</TableCell>
+                    <TableCell className="text-right font-medium">
+                      {formatCurrency(item.price)}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </div>
-          <Card>
-            <CardContent className="p-4 gap-4">
-              <div className="pb-3 text-xl">
-                Subtotal ({cart.items.reduce((a, c) => a + c.qty, 0)}):
-                <span className="font-bold">
+
+          {/* Order Summary Card - Bigger Section */}
+          <Card className="h-fit md:col-span-2">
+            <CardContent className="p-6 space-y-6">
+              {/* Subtotal Section */}
+              <div className="text-lg font-semibold text-center md:text-left">
+                Subtotal ({cart.items.reduce((a, c) => a + c.qty, 0)} items):{" "}
+                <span className="font-bold text-primary">
                   {formatCurrency(cart.itemsPrice)}
                 </span>
               </div>
+
+              {/* Checkout or Sign In Button */}
               {userId ? (
                 <Button
-                  className="w-full text-xs"
+                  className="w-full"
                   disabled={isPending}
                   onClick={() =>
                     startTransition(() => {
@@ -136,15 +149,15 @@ const CartTable = ({ cart, userId }: { cart?: Cart; userId?: string }) => {
                   }
                 >
                   {isPending ? (
-                    <Loader className="w-4 h-4 animate-spin" />
+                    <Loader className="mr-2 h-4 w-4 animate-spin" />
                   ) : (
-                    <ArrowRight className="w-4 h-4" />
+                    <ArrowRight className="mr-2 h-4 w-4" />
                   )}
-                  Proceed to checkout
+                  Proceed to Checkout
                 </Button>
               ) : (
                 <Button
-                  className="w-full text-xs"
+                  className="w-full"
                   disabled={isPending}
                   onClick={() =>
                     startTransition(() => {
@@ -153,9 +166,9 @@ const CartTable = ({ cart, userId }: { cart?: Cart; userId?: string }) => {
                   }
                 >
                   {isPending ? (
-                    <Loader className="w-4 h-4 animate-spin" />
+                    <Loader className="mr-2 h-4 w-4 animate-spin" />
                   ) : (
-                    <ArrowRight className="w-4 h-4" />
+                    <ArrowRight className="mr-2 h-4 w-4" />
                   )}
                   Sign In to Checkout
                 </Button>
@@ -164,7 +177,7 @@ const CartTable = ({ cart, userId }: { cart?: Cart; userId?: string }) => {
           </Card>
         </div>
       )}
-    </>
+    </div>
   );
 };
 

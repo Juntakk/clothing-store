@@ -17,24 +17,32 @@ const CategoryDrawer = async () => {
   return (
     <Drawer>
       <DrawerTrigger asChild>
-        <Button variant="outline">
-          <MenuIcon />
+        <Button variant="outline" size="icon">
+          <MenuIcon className="h-5 w-5" />
         </Button>
       </DrawerTrigger>
-      <DrawerContent className="h-full max-w-sm">
+      <DrawerContent className="h-full w-min">
         <DrawerHeader>
-          <DrawerTitle>Select a category</DrawerTitle>
-          <div className="space-y-1">
-            {categories.map((x) => (
+          <DrawerTitle className="text-lg font-semibold">
+            Select a category
+          </DrawerTitle>
+          <div className="mt-5 space-y-2">
+            {categories.map((category) => (
               <Button
+                key={category.category}
                 className="w-full justify-start"
                 variant="ghost"
-                key={x.category}
                 asChild
               >
                 <DrawerClose asChild>
-                  <Link href={`/search?category=${x.category}`}>
-                    {x.category}({x._count})
+                  <Link
+                    href={`/search?category=${category.category}`}
+                    className="flex items-center justify-between w-full"
+                  >
+                    <span>{category.category}</span>
+                    <span className="text-muted-foreground">
+                      ({category._count})
+                    </span>
                   </Link>
                 </DrawerClose>
               </Button>
