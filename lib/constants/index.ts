@@ -8,43 +8,43 @@ export const LATEST_PRODUCTS_LIMIT =
   Number(process.env.LATEST_PRODUCTS_LIMIT) || 4;
 
 export const signInDefaultValues = {
-  email: "",
-  password: "",
+  email: "admin@example.com",
+  password: "123456",
 };
 
 export const signUpDefaultValues = {
-  name: "",
-  email: "",
-  password: "",
-  confirmPassword: "",
+  name: "Test User",
+  email: "test_user@example.com",
+  password: "123456",
+  confirmPassword: "123456",
 };
 
 export const shippingAddressDefaultValues = {
-  fullName: "",
-  streetAddress: "",
-  city: "",
-  postalCode: "",
-  country: "",
+  fullName: "John Doe",
+  streetAddress: "1234 St Road",
+  city: "Anytown",
+  postalCode: "ABC123",
+  country: "Zimbabwe",
 };
 
 export const PAYMENT_METHODS = process.env.PAYMENT_METHODS
   ? process.env.PAYMENT_METHODS.split(", ")
   : ["PayPal", "Stripe", "CashOnDelivery"];
 export const DEFAULT_PAYMENT_METHOD =
-  process.env.DEFAULT_PAYMENT_METHOD || "PayPal";
+  process.env.DEFAULT_PAYMENT_METHOD || "Stripe";
 
 export const PAGE_SIZE = Number(process.env.PAGE_SIZE) || 12;
 
 export const productDefaultValues = {
-  name: "",
-  slug: "",
-  category: "",
-  images: [],
-  brand: "",
-  description: "",
-  price: "0",
-  stock: 0,
-  rating: "0",
+  name: "Potato",
+  slug: "potato",
+  category: "Veggies",
+  images: ["/images/potato1.jpg", "/images/potato2.jpg"],
+  brand: "Yukon Gold",
+  description: "Boil 'em, mash 'em, stick 'em in a stew!",
+  price: "1",
+  stock: 1,
+  rating: "1",
   numReviews: "0",
   isFeatured: false,
   banner: null,
@@ -55,9 +55,9 @@ export const USER_ROLES = process.env.USER_ROLES
   : ["admin", "user"];
 
 export const reviewFormDefaultValues = {
-  title: "",
-  comment: "",
-  rating: 0,
+  title: "Test title for review",
+  description: "Test comment for review, this is a long comment",
+  rating: 3,
 };
 
 export const SENDER_EMAIL = process.env.SENDER_EMAIL || "onboarding@resend.dev";
